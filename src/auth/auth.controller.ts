@@ -64,22 +64,22 @@ export default class AuthController {
     });
   });
 
-  static logoutHandler = catchErrors(async (req, res)=> {
-    const accessToken = req.cookies.accessToken;
-    const {payload} = verifyToken<AccessTokenPayload>(accessToken);
+  // static logoutHandler = catchErrors(async (req, res)=> {
+  //   const accessToken = req.cookies.accessToken;
+  //   const {payload} = verifyToken<AccessTokenPayload>(accessToken);
 
 
-    if(payload){
-      await SessionModel.findByIdAndDelete(payload.sessionId);
+  //   if(payload){
+  //     await SessionModel.findByIdAndDelete(payload.sessionId);
 
-    }
+  //   }
 
-    // Clear the authentication cookies
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+  //   // Clear the authentication cookies
+  //   res.clearCookie("accessToken");
+  //   res.clearCookie("refreshToken");
 
-    return res.status(OK).json({ message: "Logout successful" });
-  });
+  //   return res.status(OK).json({ message: "Logout successful" });
+  // });
 }
 
 
