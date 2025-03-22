@@ -8,9 +8,19 @@ import errorHandler from "./middleware/errorHandler";
 import catchErrors from './utils/catchErrors';
 import { OK } from './constants/http';
 import {AuthRoutes }from './auth/routes/auth.route';
+import authenticate  from './middleware/authenticate';
+import { userRoutes } from './users/user.route';
+import { announcementRoutes } from './announcement/announcement.routes';
+import { thanksGivingRoutes } from './thanksgiving/thanksgiving.routes';
+import swaggerUi from 'swagger-ui-express';
+import { specs } from './swagger';
+
+
 
 const app = express();
 
+// ...existing code...
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -31,6 +41,11 @@ app.get("/",
 });
 
 app.use("/auth",AuthRoutes);
+
+//protected routes
+app.use("/user", authenticate, userRoutes)
+app.use("/announcement", authenticate, announcementRoutes);
+app.use("/thanksgiving", authenticate, thanksGivingRoutes);
 
 app.use(errorHandler);
 
