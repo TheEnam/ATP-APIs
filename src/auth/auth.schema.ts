@@ -15,6 +15,8 @@ export class AuthSchema{
         return this.register.parse(data);
     }
 
+
+
     static login = z.object({
         email: z.string().email().min(1).max(255),
         password: z.string().min(6).max(255),
@@ -23,5 +25,21 @@ export class AuthSchema{
     static validateLogin(data: z.infer<typeof AuthSchema.login>){
         return this.login.parse(data);
     }
+
+    static verificationCodeSchema = z.string().min(1).max(24);
+
+
+    static validateVerificationCode(data: z.infer<typeof AuthSchema.verificationCodeSchema>){
+        return this.verificationCodeSchema.parse(data);
+    }
+
+    static resetPassword = z.object({
+     
+        password: z.string().min(6).max(255),
+        verificationCode: z.string().min(1).max(24)
+    });
 }
+export const emailSchema = z.string().email().min(1).max(255);
+
+export const passwordSchema = z.string().min(6).max(255);
 

@@ -1,12 +1,13 @@
 import { z } from "zod";
 import catchErrors from "../utils/catchErrors";
-import { AuthSchema } from "./auth.schema";
+import { AuthSchema, emailSchema } from "./auth.schema";
 import { Request, Response } from "express";
-import { createAccount, login } from "./auth.service";
-import { CREATED, OK } from "../constants/http";
-import { setAuthCookies } from "../utils/cookies";
+import { createAccount, login, refreshUserAccessToken, resetPassword, sendPasswordResetEmail, verifyEmail } from "./auth.service";
+import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
+import { clearAuthCookies, getAccessTokenCookieOptions, getRefreshTokenCookieOptions, setAuthCookies } from "../utils/cookies";
 import { AccessTokenPayload, verifyToken } from "../utils/jwt";
 import SessionModel from "../models/session.model";
+import appAsert from "../utils/appAssert";
 
 export default class AuthController {
   static registerHandler = catchErrors(async function (
@@ -60,26 +61,68 @@ export default class AuthController {
 
     return res.status(OK).json({
       message: "Login successful",
-      user: { id: user.id, email: user.email },
+     // user: { id: user.id, email: user.email },
     });
   });
 
-  // static logoutHandler = catchErrors(async (req, res)=> {
-  //   const accessToken = req.cookies.accessToken;
-  //   const {payload} = verifyToken<AccessTokenPayload>(accessToken);
+  static logoutHandler = catchErrors(async (req, res)=> {
+    const accessToken = req.cookies.accessToken as string | undefined;
+    const {payload} = verifyToken(accessToken || "", );
 
 
-  //   if(payload){
-  //     await SessionModel.findByIdAndDelete(payload.sessionId);
+    if(payload){
+      await SessionModel.findByIdAndDelete(payload.sessionId);
 
-  //   }
+    }
 
-  //   // Clear the authentication cookies
-  //   res.clearCookie("accessToken");
-  //   res.clearCookie("refreshToken");
+    // Clear the authentication cookies
+    clearAuthCookies(res);
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-  //   return res.status(OK).json({ message: "Logout successful" });
-  // });
+    return res.status(OK).json({ message: "Logout successful" });
+  });
+
+  static refreshHandler = catchErrors(async (req, res) => {
+    const refreshToken = req.cookies.refreshToken as string | undefined;
+    appAsert(refreshToken,UNAUTHORIZED,"Missing refresh token");
+
+
+   const {accessToken, newRefreshToken} = await refreshUserAccessToken(refreshToken);
+
+   if (refreshToken) {
+    res.cookie("refreshToken", newRefreshToken, getRefreshTokenCookieOptions());
+   }
+
+    return res.status(OK)
+    .cookie("accessToken",accessToken,getAccessTokenCookieOptions())
+    .json({message:"Token refreshed"});
+  });
+
+  static sendPasswordResetHandler = catchErrors(async (req, res) => {
+    const email = emailSchema.parse(req.body.email);
+
+    await sendPasswordResetEmail(email);
+    // Send password reset email
+    return res.status(OK).json({ message: "Password reset email sent" });
+  })
+
+
+  static resetPasswordHandler = catchErrors(async (req, res) => {
+    const request = AuthSchema.resetPassword.parse(req.body);
+
+    await resetPassword(request);
+
+    return clearAuthCookies(res).status(OK).json({mesage:"Password reset succesful"})
+  })
 }
+
+export const verifyEmailHandler = catchErrors(async (req, res) => {
+  const verificationCode = AuthSchema.validateVerificationCode(req.params.code);
+
+  await verifyEmail(verificationCode);
+
+  return res.status(OK).json({ message: "Email was successfully verified" });
+});
 
 

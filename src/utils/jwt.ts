@@ -41,14 +41,14 @@ export const signToken = (
   });
 };
 
-export const verifyToken = <TPayload extends object> (
+export const verifyToken = <TPayload extends object = AccessTokenPayload> (
   token: string,
   options?: VerifyOptions & {secret: string}
 )=> {
   const {secret = JWT_SECRET, ...verifyOpts} = options || {};
   try {
     const payload = jwt.verify(token, secret, {
-      ...defaults,...verifyOpts});
+      ...defaults,...verifyOpts}) as TPayload;
       return {
         payload
       };
