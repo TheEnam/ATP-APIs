@@ -61,7 +61,7 @@ export default class AuthController {
 
     return res.status(OK).json({
       message: "Login successful",
-     // user: { id: user.id, email: user.email },
+     user: { id: user.id, email: user.email },
     });
   });
 
