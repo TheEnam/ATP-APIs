@@ -82,6 +82,7 @@ export const createAccount = async (data: CreateAccountParams) => {
 };
 
 export const login = async ({ email, password }: LoginParams) => {
+  
   //get user by email
   const user = await UserModel.findOne({
     email,
@@ -89,7 +90,8 @@ export const login = async ({ email, password }: LoginParams) => {
   appAsert(user, UNAUTHORIZED, "Invalid email or password");
 
   //validate password from the request
-  const isValid = user.comparePassword(password);
+  const isValid = await user.comparePassword(password);
+  console.log(isValid);
   appAsert(isValid, UNAUTHORIZED, "Invalid email or password");
   const userId = user._id;
 
