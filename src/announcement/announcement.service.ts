@@ -1,17 +1,11 @@
+import { FilterQuery } from 'mongoose';
 import { INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http';
 import appAsert from '../utils/appAssert';
-import Announcement, { AnnouncementType } from './announcement.model';
+import AnnouncementModel, { IAnnouncement } from './announcement.model';
 
-interface CreateAnnouncementParams {
-  title: string;
-  description: string;
-  typeOfAnnouncement: AnnouncementType;
-  dateOfAnnouncement: Date;
-  is_recurring: boolean;
-}
 
-export const createAnnouncement = async (params: CreateAnnouncementParams) => {
-  const announcement = await Announcement.create(params);
+export const createAnnouncement = async (data: Partial<IAnnouncement>): Promise<IAnnouncement> => {
+  const announcement = await AnnouncementModel.create(data);
   
   appAsert(
     announcement, 
@@ -23,9 +17,9 @@ export const createAnnouncement = async (params: CreateAnnouncementParams) => {
 };
 
 export const getAllAnnouncements = async (
-  filter: Partial<CreateAnnouncementParams> = {}
+  filter: Partial<IAnnouncement> = {}
 ) => {
-  const announcements = await Announcement.find(filter)
+  const announcements = await AnnouncementModel.find(filter as FilterQuery<IAnnouncement>)
     .sort({ dateOfAnnouncement: -1 })
     .lean();
 
@@ -33,7 +27,7 @@ export const getAllAnnouncements = async (
 };
 
 export const getAnnouncementById = async (id: string) => {
-  const announcement = await Announcement.findById(id).lean();
+  const announcement = await AnnouncementModel.findById(id).lean();
   
   appAsert(
     announcement, 
@@ -46,9 +40,9 @@ export const getAnnouncementById = async (id: string) => {
 
 export const updateAnnouncement = async (
   id: string, 
-  updates: Partial<CreateAnnouncementParams>
+  updates: Partial<IAnnouncement>
 ) => {
-  const announcement = await Announcement.findByIdAndUpdate(
+  const announcement = await AnnouncementModel.findByIdAndUpdate(
     id,
     { $set: updates },
     { new: true }
@@ -64,7 +58,7 @@ export const updateAnnouncement = async (
 };
 
 export const deleteAnnouncement = async (id: string) => {
-  const announcement = await Announcement.findByIdAndDelete(id).lean();
+  const announcement = await AnnouncementModel.findByIdAndDelete(id).lean();
   
   appAsert(
     announcement, 
