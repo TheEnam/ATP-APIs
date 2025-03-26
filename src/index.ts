@@ -10,10 +10,11 @@ import { OK } from './constants/http';
 import {AuthRoutes }from './auth/routes/auth.route';
 import authenticate  from './middleware/authenticate';
 import { userRoutes } from './users/user.route';
-import { announcementRoutes } from './announcement/announcement.routes';
+import { AnnouncementRoutes } from './announcement/announcement.routes';
 import { thanksGivingRoutes } from './thanksgiving/thanksgiving.routes';
 import swaggerUi from 'swagger-ui-express';
 import { specs } from './swagger';
+import { TransferRoutes } from './transfer/transfer.routes';
 
 
 
@@ -44,8 +45,9 @@ app.use("/auth",AuthRoutes);
 
 //protected routes
 app.use("/user", authenticate, userRoutes)
-app.use("/announcement", authenticate, announcementRoutes);
+app.use("/announcement", authenticate, AnnouncementRoutes);
 app.use("/thanksgiving", authenticate, thanksGivingRoutes);
+app.use("/transfer", authenticate, TransferRoutes);
 
 app.use(errorHandler);
 
