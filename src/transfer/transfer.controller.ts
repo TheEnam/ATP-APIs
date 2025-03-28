@@ -1,7 +1,7 @@
 import { CREATED, OK } from "../constants/http";
 import catchErrors from "../utils/catchErrors";
 import { Request, Response } from "express";
-import { createTransfer, deleteTransfer, getAllTransfers, getTransferById, updateTransfer } from "./transfer.service";
+import { advanceTransferStage, createTransfer, deleteTransfer, getAllTransfers, getTransferById, rejectTransfer, updateTransfer } from "./transfer.service";
 
 export const createTransferHandler = catchErrors (async(req:Request, res:Response) => {
     const transfer = await createTransfer(req.body);
@@ -27,4 +27,14 @@ export const getTransfersHandler = catchErrors(async (req: Request, res: Respons
   export const deleteTransferHandler = catchErrors(async (req: Request, res: Response) => {
     const transfer = await deleteTransfer(req.params.id);
     res.status(OK).json(transfer);
+  });
+  
+export const advanceStageHandler = catchErrors(async (req: Request, res: Response) => {
+    const transfer = await advanceTransferStage(req.params.id);
+    res.status(200).json(transfer);
+  });
+  
+  export const rejectTransferHandler = catchErrors(async (req: Request, res: Response) => {
+    const transfer = await rejectTransfer(req.params.id);
+    res.status(200).json(transfer);
   });
