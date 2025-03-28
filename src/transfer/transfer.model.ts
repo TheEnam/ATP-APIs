@@ -1,14 +1,28 @@
 import { Schema, model, Document } from 'mongoose';
-//import { number } from 'zod';
 
+export enum TransferType {
+  IN = 'In',
+  OUT = 'Out',
+}
 
+export enum TransferStage {
+  FIRST_READING = 'First Reading',
+  SECOND_READING = 'Second Reading',
+  THIRD_READING = 'Third Reading',
+  APPROVED = 'Approved',
+  REJECTED = 'Rejected'
+}
 
 export interface ITransfer extends Document {
   memberName: string;
   churchFrom: string;
   churchTo: string;
-  numberOfReadings: Number;
-  is_approved: boolean;
+  dateOfBirth: Date;
+  dateOfBaptism: Date;
+  baptizedBy: string;
+  parentsName: string;
+  transferType: TransferType;
+  transferStage: TransferStage;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,39 +30,80 @@ export interface ITransfer extends Document {
 const transferSchema = new Schema({
   memberName: { 
     type: String, 
-    required: [true, 'Members name is required'],
+    required: [true, 'Member name is required'],
     trim: true,
-    minlength: [3, 'Name must be at least 3 characters long'],
-    maxlength: [100, 'Name cannot exceed 100 characters']
+    minlength: [3, 'Member name must be at least 3 characters long'],
+    maxlength: [100, 'Member name cannot exceed 100 characters']
   },
   churchFrom: { 
     type: String, 
-    required: [true, 'Members church of origin is required'],
+    required: [true, 'Source church is required'],
     trim: true,
-    minlength: [10, 'Church name must be at least 10 characters long'],
-    maxlength: [1000, 'Church name cannot exceed 1000 characters']
+    minlength: [3, 'Church name must be at least 3 characters long'],
+    maxlength: [200, 'Church name cannot exceed 200 characters']
   },
   churchTo: { 
     type: String, 
-    required: [true, 'Members church of destination is required'],
+    required: [true, 'Destination church is required'],
     trim: true,
-    minlength: [10, 'Church name must be at least 10 characters long'],
-    maxlength: [1000, 'Church name cannot exceed 1000 characters']
+    minlength: [3, 'Church name must be at least 3 characters long'],
+    maxlength: [200, 'Church name cannot exceed 200 characters']
   },
-  numberOfReadings: {
-    type: Number,
-    required: [true, 'Number of times this has been read is required'],
-    default: 0
+  dateOfBirth: {
+    type: Date,
+    required: [true, 'Date of birth is required'],
+    validate: {
+      validator: function(value: Date) {
+        return value <= new Date();
+      },
+      message: 'Date of birth cannot be in the future'
+    }
   },
-
-  is_approved: {
-    type: Boolean,
-    required: [true, 'Approval status is required'],
-    default: false
+  dateOfBaptism: {
+    type: Date,
+    required: [true, 'Date of baptism is required'],
+    validate: {
+      validator: function(value: Date) {
+        return value <= new Date();
+      },
+      message: 'Date of baptism cannot be in the future'
+    }
+  },
+  baptizedBy: {
+    type: String,
+    required: [true, 'Baptizing minister name is required'],
+    trim: true,
+    minlength: [3, 'Minister name must be at least 3 characters long'],
+    maxlength: [100, 'Minister name cannot exceed 100 characters']
+  },
+  parentsName: {
+    type: String,
+    required: [true, 'Parents name is required'],
+    trim: true,
+    minlength: [3, 'Parents name must be at least 3 characters long'],
+    maxlength: [200, 'Parents name cannot exceed 200 characters']
+  },
+  transferType: {
+    type: String,
+    required: [true, 'Transfer type is required'],
+    enum: {
+      values: Object.values(TransferType),
+      message: '{VALUE} is not a valid transfer type'
+    },
+    default: TransferType.IN
+  },
+  transferStage: {
+    type: String,
+    required: [true, 'Transfer stage is required'],
+    enum: {
+      values: Object.values(TransferStage),
+      message: '{VALUE} is not a valid transfer stage'
+    },
+    default: TransferStage.FIRST_READING
   }
 }, {
-  timestamps: true, 
-  toJSON: { 
+  timestamps: true,
+  toJSON: {
     transform: function(doc, ret) {
       ret.id = ret._id;
       delete ret._id;
@@ -58,17 +113,14 @@ const transferSchema = new Schema({
   }
 });
 
-// Index for improved query performance
-transferSchema.index({ memberName: 1, churchFrom: 1, churchTo: 1 }, { unique: true });
+// Compound index for unique transfers
+transferSchema.index(
+  { memberName: 1, churchFrom: 1, churchTo: 1 }, 
+  { unique: true }
+);
 
-
-transferSchema.pre('save', function(next) {
-  if (this.isModified('title')) {
-    this.memberName = this.memberName.trim();
-  }
-
-  next();
-});
+// Index for querying by transfer stage and type
+transferSchema.index({ transferStage: 1, transferType: 1 });
 
 const TransferModel = model<ITransfer>('Transfer', transferSchema);
 
