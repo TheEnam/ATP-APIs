@@ -56,7 +56,7 @@ const announcementSchema = new Schema({
     default: false
   }
 }, {
-  timestamps: true, // Adds createdAt and updatedAt fields automatically
+  timestamps: true, 
   toJSON: { 
     transform: function(doc, ret) {
       ret.id = ret._id;
