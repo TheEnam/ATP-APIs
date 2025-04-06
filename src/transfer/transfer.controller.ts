@@ -1,12 +1,18 @@
-import { CREATED, OK } from "../constants/http";
+import { BAD_REQUEST, CREATED, OK } from "../constants/http";
 import catchErrors from "../utils/catchErrors";
 import { Request, Response } from "express";
 import { advanceTransferStage, createTransfer, deleteTransfer, getAllTransfers, getTransferById, rejectTransfer, updateTransfer } from "./transfer.service";
+import AppError from "../utils/AppError";
 
-export const createTransferHandler = catchErrors (async(req:Request, res:Response) => {
-    const transfer = await createTransfer(req.body);
-    res.status(CREATED).json(transfer);
+export const createTransferHandler = catchErrors(async (req: Request, res: Response) => {
+  const transferData = req.body;
+  
+  if (!transferData.dateOfBirth || !transferData.dateOfBaptism) {
+      throw new AppError(BAD_REQUEST, 'Birth and baptism dates are required');
+  }
 
+  const transfer = await createTransfer(transferData);
+  res.status(201).json(transfer);
 });
 
 export const getTransfersHandler = catchErrors(async (req: Request, res: Response) => {
