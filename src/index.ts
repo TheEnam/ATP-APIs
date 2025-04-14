@@ -21,13 +21,18 @@ import { OrderRoutes } from './orderOfService/order.routes';
 
 const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customCss: '.swagger-ui .topbar { display: none }',
+  }));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(
     cors({
-        origin: APP_ORIGIN,
+        origin: [APP_ORIGIN,'https://anms.fly.dev'],
         credentials: true,
     })
 );
