@@ -8,6 +8,14 @@ const options = {
       version: '1.0.0',
       description: 'API documentation for Authentication APIs',
     },
+    servers: [
+      {
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://anms.fly.dev'
+          : `http://localhost:${process.env.PORT}`,
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+      },
+    ],
     components: {
       securitySchemes: {
         cookieAuth: {
@@ -21,7 +29,7 @@ const options = {
       cookieAuth: []
     }]
   },
-  apis: ['./src/**/*.ts'], // Path to your API routes
+  apis: ['./src/**/*.docs.ts'], // Path to your API routes
 };
 
 export const specs = swaggerJsdoc(options);

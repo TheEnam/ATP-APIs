@@ -20,7 +20,7 @@
  *             required:
  *               - email
  *               - password
- *               - userAgent
+ *               - confirmPassword
  *             properties:
  *               email:
  *                 type: string
@@ -28,8 +28,9 @@
  *               password:
  *                 type: string
  *                 minLength: 6
- *               userAgent:
+ *               confirmPassword:
  *                 type: string
+ *                 minLength: 6
  *     responses:
  *       201:
  *         description: Account created successfully
