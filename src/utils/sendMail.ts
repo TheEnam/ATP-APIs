@@ -1,4 +1,4 @@
-import resend from "../config/resend";
+
 import { NODE_ENV, SMTP_PASSWORD, SMTP_USERNAME } from "../constants/env";
 import nodemailer from "nodemailer";
 import fs from "fs";
