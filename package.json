@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "ts-node-dev --files src/index.ts index.d.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && cp ./package.json ./dist"
+    "build": "npm install --save-dev @types/node @types/express @types/jsonwebtoken @types/cors @types/cookie-parser @types/swagger-ui-express @types/swagger-jsdoc @types/bcrypt && tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -29,8 +30,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "ts-node-dev": "^2.0.0",
