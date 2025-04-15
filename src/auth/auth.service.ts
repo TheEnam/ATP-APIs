@@ -206,20 +206,20 @@ export const sendPasswordResetEmail = async (email: string) => {
 
   //send email
   const url = `${APP_ORIGIN}/password/reset/?code=${verificationCode._id}&exp= ${expiresAt.getTime()}`;
-  const{data, error}= await sendMail({
+  const response = await sendMail({
     to: user.email,
     ...getPasswordResetTemplate(url),
   });
-  appAsert(
-    data?.id,
-    INTERNAL_SERVER_ERROR,
-    `${error?.name } - ${error?.message }`
-  )
-  //return response
-  return{
-    url,
-    emailId: data.id,
+
+  if (response.error) {
+    console.error('Email sending failed:', response.error);
+    appAsert(false, INTERNAL_SERVER_ERROR, `Failed to send email: ${response.error.message}`);
   }
+
+  return {
+    url,
+    emailId: response.data?.id
+  };
 }
 
 type ResetPasswordParams = {

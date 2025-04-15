@@ -1,23 +1,58 @@
 import resend from "../config/resend";
-import { EMAIL_SENDER, NODE_ENV } from "../constants/env";
+import { NODE_ENV, SMTP_PASSWORD, SMTP_USERNAME } from "../constants/env";
+import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
+import * as Handlebars from "handlebars";
 
-type Params = {
+interface EmailResponse {
+  data?: {
+    id: string;
+    message: string;
+  };
+  error?: {
+    name: string;
+    message: string;
+  };
+}
+
+interface SendMailParams {
   to: string;
   subject: string;
   text: string;
   html: string;
+}
+
+export const sendMail = async (params: SendMailParams): Promise<EmailResponse> => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: SMTP_USERNAME,
+        pass: SMTP_PASSWORD
+      }
+    });
+
+    const info = await transporter.sendMail({
+      from: SMTP_USERNAME,
+      to: params.to,
+      subject: params.subject,
+      text: params.text,
+      html: params.html
+    });
+
+    return {
+      data: {
+        id: info.messageId,
+        message: 'Email sent successfully'
+      }
+    };
+  } catch (error: any) {
+    return {
+      error: {
+        name: error.name,
+        message: error.message
+      }
+    };
+  }
 };
-
-const getFromEmail = () =>
-  NODE_ENV === "development" ? "onboarding@resend.dev" : EMAIL_SENDER;
-
-const getToEmail = (to: string) =>
-  NODE_ENV === "development" ? "delivered@resend.dev" : to;
-export const sendMail = async ({ to, subject, text, html }: Params) =>
-  await resend.emails.send({
-    from: getFromEmail(),
-    to: getToEmail(to),
-    subject,
-    text,
-    html,
-  });
