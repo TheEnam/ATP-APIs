@@ -1,9 +1,7 @@
 
-import { NODE_ENV, SMTP_PASSWORD, SMTP_USERNAME } from "../constants/env";
+import { SMTP_PASSWORD, SMTP_USERNAME } from "../constants/env";
 import nodemailer from "nodemailer";
-import fs from "fs";
-import path from "path";
-import * as Handlebars from "handlebars";
+
 
 interface EmailResponse {
   data?: {
@@ -34,7 +32,7 @@ export const sendMail = async (params: SendMailParams): Promise<EmailResponse> =
     });
 
     const info = await transporter.sendMail({
-      from: SMTP_USERNAME,
+      from: "LESCetariat",
       to: params.to,
       subject: params.subject,
       text: params.text,

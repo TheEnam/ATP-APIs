@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(
     cors({
-        origin: [APP_ORIGIN,'https://anms.fly.dev'],
+        origin: [APP_ORIGIN,'https://atp-apis.onrender.com'],
         credentials: true,
     })
 );
