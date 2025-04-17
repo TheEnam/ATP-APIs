@@ -11,7 +11,7 @@ const options = {
     servers: [
       {
         url: process.env.NODE_ENV === 'production' 
-          ? 'https://anms.fly.dev'
+          ? 'https://atp-apis.onrender.com'
           : `http://localhost:${process.env.PORT}`,
         description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
