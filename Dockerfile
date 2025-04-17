@@ -30,6 +30,8 @@ COPY . .
 # Build application
 RUN npm run build
 
+RUN npm install --save-dev typescript
+
 # Remove development dependencies
 RUN npm prune --omit=dev
 
