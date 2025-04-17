@@ -33,7 +33,7 @@ RUN npm run build
 RUN npm install --save-dev typescript
 
 # Remove development dependencies
-RUN npm prune --omit=dev
+# RUN npm prune --omit=dev
 
 
 # Final stage for app image
@@ -44,4 +44,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "node", "index.js" ]
+CMD [ "npm", "run","start"]
