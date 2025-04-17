@@ -46,10 +46,6 @@
  *                       type: string
  *                     verified:
  *                       type: boolean
- *                 accessToken:
- *                   type: string
- *                 refreshToken:
- *                   type: string
  *       409:
  *         description: Email already in use
  *

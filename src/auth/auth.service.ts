@@ -59,27 +59,27 @@ export const createAccount = async (data: CreateAccountParams) => {
     console.log(error);
   }
   // create session
-  const session = await SessionModel.create({
-    userId,
-    userAgent: data.userAgent,
-  });
+  // const session = await SessionModel.create({
+  //   userId,
+  //   userAgent: data.userAgent,
+  // });
 
-  // sign access token & refresh Token
-  const refreshToken = signToken(
-    { sessionId: session._id },
-    refreshTokenSignOptions
-  );
+  // // sign access token & refresh Token
+  // const refreshToken = signToken(
+  //   { sessionId: session._id },
+  //   refreshTokenSignOptions
+  // );
 
-  const accessToken = signToken({
-    userId,
-    sessionId: session._id,
-  });
+  // const accessToken = signToken({
+  //   userId,
+  //   sessionId: session._id,
+  // });
 
   //return user & tokens
   return {
     user,
-    accessToken,
-    refreshToken,
+    // accessToken,
+    // refreshToken,
   };
 };
 
@@ -91,6 +91,9 @@ export const login = async ({ email, password }: LoginParams) => {
   });
   appAsert(user, UNAUTHORIZED, "Invalid email or password");
 
+   // Check if email is verified
+   appAsert(user.verified, UNAUTHORIZED, "Please verify your email before logging in");
+   
   //validate password from the request
   const isValid = await user.comparePassword(password);
   console.log(isValid);

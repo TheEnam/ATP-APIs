@@ -23,14 +23,14 @@ export default class AuthController {
     }
 
     // Create the user account
-    const { user, accessToken, refreshToken } = await createAccount({
+    const { user } = await createAccount({
       email,
       password,
       userAgent,
     });
 
     // Set authentication cookies
-    setAuthCookies({ res, accessToken, refreshToken });
+    //setAuthCookies({ res, accessToken, refreshToken });
 
     return res.status(CREATED).json({
       id: user.id,
@@ -62,7 +62,10 @@ export default class AuthController {
     return res.status(OK).json({
       message: "Login successful",
      user: { id: user.id, email: user.email },
+     accessToken,
+    refreshToken,
     });
+
   });
 
   static logoutHandler = catchErrors(async (req, res)=> {
@@ -96,7 +99,7 @@ export default class AuthController {
 
     return res.status(OK)
     .cookie("accessToken",accessToken,getAccessTokenCookieOptions())
-    .json({message:"Token refreshed"});
+    .json({message:"Token refreshed", accessToken});
   });
 
   static sendPasswordResetHandler = catchErrors(async (req, res) => {
