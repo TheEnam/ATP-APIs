@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: npm install               # Install dependencies
-      - run: npx tsc   
+      - run: npx tsc  
+      - run: npm install -g typescript  
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
