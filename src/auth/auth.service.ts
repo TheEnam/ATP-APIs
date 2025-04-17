@@ -40,18 +40,20 @@ export const createAccount = async (data: CreateAccountParams) => {
 
   //create verification code
   const verificationCode = await VerificationCodeModel.create({
+    code: Math.floor(1000 + Math.random() * 9000).toString(),
     userId,
     type: VerificationCodeType.EmailVerification,
     expiresAt: oneYearFromNow(),
   });
 
-  const url = `${APP_ORIGIN}/email/verify/${verificationCode._id}`;
+  const url = `${APP_ORIGIN}/email/verify`;
+  const code = verificationCode.code;
   //send verification email
   const {
     error
   } = await sendMail({
     to: user.email,
-    ...getVerifyEmailTemplate(url)
+    ...getVerifyEmailTemplate(url,code),
   });
   if(error){
     console.log(error);
@@ -159,10 +161,10 @@ export const refreshUserAccessToken = async (refreshToken: string) => {
 
 };
 
-export const verifyEmail = async (code: string) => {
+export const verifyEmail = async (verificationData: { code: string }) => {
   //get the verification code
   const validCode = await VerificationCodeModel.findOne({
-    _id: code,
+    code: verificationData.code,
     type: VerificationCodeType.EmailVerification,
     expiresAt: { $gt: new Date() },
   });
@@ -171,7 +173,7 @@ export const verifyEmail = async (code: string) => {
   const updatedUser = await UserModel.findByIdAndUpdate(validCode.userId,
      {
     verified: true,},
-  {new: true});
+  {new: true}).select('-password');
   appAsert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify email");
   //delete verification code
   await validCode.deleteOne();

@@ -113,21 +113,41 @@
  *       401:
  *         description: Invalid refresh token
  *
- * /auth/email/verify/{code}:
- *   get:
+ * /auth/email/verify:
+ *   post:
  *     summary: Verify email address
  *     tags: [Authentication]
- *     parameters:
- *       - in: path
- *         name: code
- *         required: true
- *         schema:
- *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - code
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 description: Verification code sent in email
  *     responses:
  *       200:
  *         description: Email verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 updatedUser:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                     verified:
+ *                       type: boolean
  *       404:
  *         description: Invalid or expired verification code
+ *       500:
+ *         description: Failed to verify email
  *
  * /auth/password/forgot:
  *   post:

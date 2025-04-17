@@ -118,11 +118,9 @@ export default class AuthController {
 }
 
 export const verifyEmailHandler = catchErrors(async (req, res) => {
-  const verificationCode = AuthSchema.validateVerificationCode(req.params.code);
+  const result = await verifyEmail(req.body)
 
-  await verifyEmail(verificationCode);
-
-  return res.status(OK).json({ message: "Email was successfully verified" });
+  return res.status(OK).json(result);
 });
 
 
