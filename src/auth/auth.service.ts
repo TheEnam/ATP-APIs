@@ -58,28 +58,10 @@ export const createAccount = async (data: CreateAccountParams) => {
   if(error){
     console.log(error);
   }
-  // create session
-  // const session = await SessionModel.create({
-  //   userId,
-  //   userAgent: data.userAgent,
-  // });
 
-  // // sign access token & refresh Token
-  // const refreshToken = signToken(
-  //   { sessionId: session._id },
-  //   refreshTokenSignOptions
-  // );
-
-  // const accessToken = signToken({
-  //   userId,
-  //   sessionId: session._id,
-  // });
-
-  //return user & tokens
   return {
     user,
-    // accessToken,
-    // refreshToken,
+ 
   };
 };
 
@@ -204,13 +186,15 @@ export const sendPasswordResetEmail = async (email: string) => {
   //create verification code
   const expiresAt = oneHourFromNow();
   const verificationCode = await VerificationCodeModel.create({
+    code: Math.floor(1000 + Math.random() * 9000).toString(),
     userId: user._id,
     type: VerificationCodeType.PasswordReset,
     expiresAt,
   });
 
+  const code = verificationCode.code;
   //send email
-  const url = `${APP_ORIGIN}/password/reset/?code=${verificationCode._id}&exp= ${expiresAt.getTime()}`;
+  const url = `${APP_ORIGIN}/password/reset/?code=${code}&exp= ${expiresAt.getTime()}`;
   const response = await sendMail({
     to: user.email,
     ...getPasswordResetTemplate(url),
@@ -237,7 +221,7 @@ export const resetPassword = async(
   }: ResetPasswordParams) =>{
     //get verification code
     const validCode = await VerificationCodeModel.findOne({
-      _id: verificationCode,
+      code: verificationCode,
       type: VerificationCodeType.PasswordReset,
       expiresAt: {$gt: new Date()},
 

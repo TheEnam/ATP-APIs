@@ -43,8 +43,8 @@ export const getVerifyEmailTemplate = (url: string, code: string) => ({
                                 <h1 style="color:#1e1e2d; font-weight:500; margin:0; font-size:32px; font-family:'Rubik',sans-serif;">Please verify your email address</h1>
                                 <span style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
                                 <p style="color:#455056; font-size:15px; line-height:24px; margin:0;">Click on the following link to verify your email address and use the verification code below when prompted.</p>
-                                <div class="verification-code">${code}</div>
-                                <a target="_blank" href="${url}" style="background:#808080; text-decoration:none !important; font-weight:500; margin-top:24px; color:#fff; text-transform:uppercase; font-size:14px; padding:10px 24px; display:inline-block; border-radius:50px;">Verify Email Address</a>
+                                <div style="font-size:24px; font-weight:bold; color:#1e1e2d; letter-spacing:2px; margin:20px 0; padding:10px; background: #f5f5f5; display: inline-block;  ">${code}</div>
+                                <a target="_blank" href="${url}" style="background:#1338BE; text-decoration:none !important; font-weight:500; margin-top:24px; color:#fff; text-transform:uppercase; font-size:14px; padding:10px 24px; display:inline-block; border-radius:50px;">Verify Email Address</a>
                             </td>
                         </tr>
                         <tr><td style="height:40px;">&nbsp;</td></tr>
