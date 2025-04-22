@@ -15,7 +15,7 @@ export default class AuthController {
     res: Response
   ) {
     // Validate the request body
-    const { email, password, confirmPassword, userAgent } =
+    const {fullname, email, password, confirmPassword, userAgent } =
       AuthSchema.validateRegister(req.body);
 
     if (password !== confirmPassword) {
@@ -24,6 +24,7 @@ export default class AuthController {
 
     // Create the user account
     const { user } = await createAccount({
+      fullname,
       email,
       password,
       userAgent,
@@ -34,6 +35,7 @@ export default class AuthController {
 
     return res.status(CREATED).json({
       id: user.id,
+      fullname: user.fullname,
       email: user.email,
       verified: user.verified,
       createdAt: user.createdAt,
