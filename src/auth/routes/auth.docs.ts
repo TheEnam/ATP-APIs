@@ -18,10 +18,14 @@
  *           schema:
  *             type: object
  *             required:
+ *               - fullname
  *               - email
  *               - password
  *               - confirmPassword
  *             properties:
+ *               fullname:
+ *                 type: string
+ *                 minLength: 1
  *               email:
  *                 type: string
  *                 format: email

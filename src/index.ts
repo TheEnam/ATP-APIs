@@ -50,10 +50,10 @@ app.use("/auth",AuthRoutes);
 
 //protected routes
 app.use("/user", authenticate, userRoutes)
-app.use("/announcement", authenticate, AnnouncementRoutes);
-app.use("/thanksgiving", authenticate, thanksGivingRoutes);
-app.use("/transfer", authenticate, TransferRoutes);
-app.use("/order", authenticate, OrderRoutes);
+app.use("/announcement", AnnouncementRoutes);
+app.use("/thanksgiving", thanksGivingRoutes);
+app.use("/transfer",  TransferRoutes);
+app.use("/order",  OrderRoutes);
 
 app.use(errorHandler);
 
